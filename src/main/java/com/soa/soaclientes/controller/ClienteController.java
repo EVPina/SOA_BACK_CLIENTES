@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.soa.soaclientes.dto.ClienteRequest;
 import com.soa.soaclientes.dto.ClienteResponse;
 import com.soa.soaclientes.dto.CumpleanosRequest;
+import com.soa.soaclientes.dto.LoginRequest;
+import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.service.ClienteService;
 
 import java.util.List;
@@ -58,5 +60,25 @@ public class ClienteController {
                                                      @Valid @RequestBody CumpleanosRequest dto) {
         clienteService.registrarCumpleanos(id, dto);
         return ResponseEntity.ok().build();
+    }
+
+    // controller/ClienteController.java
+// Agrega estos métodos:
+
+    // Endpoint de LOGIN
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = clienteService.login(request);
+        if (response.success()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    // Endpoint de BÚSQUEDA por email O teléfono
+    @GetMapping("/buscar")
+    public ClienteResponse buscarPorTelefonoOEmail(@RequestParam String valor) {
+        // Este método requiere implementar en service
+        return clienteService.buscarPorTelefonoOEmail(valor);
     }
 }

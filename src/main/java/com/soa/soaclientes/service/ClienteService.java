@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.soa.soaclientes.dto.ClienteRequest;
 import com.soa.soaclientes.dto.ClienteResponse;
 import com.soa.soaclientes.dto.CumpleanosRequest;
+import com.soa.soaclientes.dto.LoginRequest;
+import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.entity.Cliente;
 import com.soa.soaclientes.entity.Cumpleanos;
 import com.soa.soaclientes.exception.BusinessException;
@@ -108,5 +110,46 @@ public class ClienteService {
             c.getEmail(), c.getFechaRegistro(), c.getUltimaVisita(),
             c.getVecesVisitado(), c.getActivo()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse login(LoginRequest request) {
+        String identificador = request.identificador();
+        String password = request.password();
+        
+        // Buscar por email o teléfono
+        Cliente cliente = clienteRepository.findByEmail(identificador)
+            .orElseGet(() -> clienteRepository.findByTelefono(identificador)
+                .orElse(null));
+        
+        if (cliente == null) {
+            return new LoginResponse(false, "Credenciales incorrectas", null, null, null, null, null);
+        }
+        
+        if (!cliente.getActivo()) {
+            return new LoginResponse(false, "Cuenta desactivada", null, null, null, null, null);
+        }
+        
+        // Verificar password
+        if (!passwordEncoder.matches(password, cliente.getPasswordHash())) {
+            return new LoginResponse(false, "Credenciales incorrectas", null, null, null, null, null);
+        }
+        
+        return new LoginResponse(
+            true, 
+            "Login exitoso",
+            cliente.getId(),
+            cliente.getNombre(),
+            cliente.getApellido(),
+            cliente.getEmail(),
+            cliente.getTelefono()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteResponse buscarPorTelefonoOEmail(String valor) {
+        Cliente cliente = clienteRepository.buscarPorTelefonoOEmail(valor)
+            .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con: " + valor));
+        return toResponse(cliente);
     }
 }
