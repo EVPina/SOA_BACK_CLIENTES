@@ -18,13 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/clientes", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/clientes")
 public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
 
-    @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<ClienteResponse> crear(@Valid @RequestBody ClienteRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.crear(dto));
     }
@@ -44,7 +43,7 @@ public class ClienteController {
         return clienteService.obtenerPorTelefono(telefono);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PutMapping(value = "/{id}")
     public ClienteResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ClienteRequest dto) {
         return clienteService.actualizar(id, dto);
     }

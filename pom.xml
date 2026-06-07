@@ -47,11 +47,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- XML para comunicación SOA -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-        </dependency>
         <!-- BCrypt para password_hash -->
         <dependency>
             <groupId>org.springframework.security</groupId>
