@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/clientes/{clienteId}", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/clientes/{clienteId}", produces = MediaType.APPLICATION_XML_VALUE)
 public class PuntosController {
 
     @Autowired

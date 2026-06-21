@@ -10,7 +10,7 @@ import com.soa.soaclientes.service.PromocionService;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/promociones", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/promociones", produces = MediaType.APPLICATION_XML_VALUE)
 public class PromocionController {
 
     @Autowired

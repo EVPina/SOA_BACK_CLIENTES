@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/clientes/{clienteId}/tarjetas", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/clientes/{clienteId}/tarjetas", produces = MediaType.APPLICATION_XML_VALUE)
 public class TarjetaController {
 
     @Autowired
