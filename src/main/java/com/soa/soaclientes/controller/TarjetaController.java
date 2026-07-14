@@ -12,12 +12,14 @@ import com.soa.soaclientes.service.TarjetaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/v1/clientes/{clienteId}/tarjetas", produces = MediaType.APPLICATION_XML_VALUE)
+@Tag(name = "Tarjetas", description = "API para gestión de tarjetas")
 public class TarjetaController {
 
     @Autowired

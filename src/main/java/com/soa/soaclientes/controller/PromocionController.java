@@ -10,11 +10,13 @@ import com.soa.soaclientes.service.PromocionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/promociones", produces = MediaType.APPLICATION_XML_VALUE)
+@Tag(name = "Promociones", description = "API para gestión de promociones")
 public class PromocionController {
 
     @Autowired

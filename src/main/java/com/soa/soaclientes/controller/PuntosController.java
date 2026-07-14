@@ -12,11 +12,14 @@ import com.soa.soaclientes.dto.HistorialPuntosResponse;
 import com.soa.soaclientes.dto.PuntosRequest;
 import com.soa.soaclientes.service.PuntosService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/api/v1/clientes/{clienteId}", produces = MediaType.APPLICATION_XML_VALUE)
+@Tag(name = "Puntos", description = "API para gestión de puntos")
 public class PuntosController {
 
     @Autowired
