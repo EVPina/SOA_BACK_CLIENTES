@@ -14,11 +14,17 @@ import com.soa.soaclientes.dto.LoginRequest;
 import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.service.ClienteService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/clientes")
+@RequestMapping(value = "/api/v1/clientes",produces = MediaType.APPLICATION_XML_VALUE)
+@Tag(name = "Clientes", description = "API para la gestión de clientes del sistema")
 public class ClienteController {
 
     @Autowired
@@ -28,32 +34,81 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.crear(dto));
     }
 
+    @Operation(
+        summary = "Listar todos los clientes",
+        description = "Retorna una lista de todos los clientes activos en el sistema"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente"),
+        @ApiResponse(responseCode = "204", description = "No hay clientes disponibles")
+    })
     @GetMapping
     public List<ClienteResponse> listar() {
         return clienteService.listar();
     }
 
+     @Operation(
+        summary = "Obtener cliente",
+        description = "Retorna la información de un cliente específico por su ID"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente obtenido exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @GetMapping("/{id}")
     public ClienteResponse obtener(@PathVariable UUID id) {
         return clienteService.obtenerPorId(id);
     }
 
+     @Operation(
+        summary = "Obtener cliente por teléfono",
+        description = "Retorna la información de un cliente específico por su número de teléfono"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente obtenido exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @GetMapping("/telefono/{telefono}")
     public ClienteResponse obtenerPorTelefono(@PathVariable String telefono) {
         return clienteService.obtenerPorTelefono(telefono);
     }
 
+
+     @Operation(
+        summary = "Actualizar información del cliente",
+        description = "Actualiza la información de un cliente específico por su ID"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @PutMapping(value = "/{id}")
     public ClienteResponse actualizar(@PathVariable UUID id, @Valid @RequestBody ClienteRequest dto) {
         return clienteService.actualizar(id, dto);
     }
 
+    @Operation(
+        summary = "Eliminar cliente",
+        description = "Elimina un cliente específico por su ID"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desactivar(@PathVariable UUID id) {
         clienteService.desactivar(id);
         return ResponseEntity.noContent().build();
     }
 
+     @Operation(
+        summary = "Se agrego cumpleaños al cliente",
+        description = "Retorna la información de un cliente específico por su ID y se agrega la fecha de cumpleaños"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente se agrego cumpleaños exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     @PostMapping(value = "/{id}/cumpleanos", consumes = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<Void> registrarCumpleanos(@PathVariable UUID id,
                                                      @Valid @RequestBody CumpleanosRequest dto) {
@@ -64,6 +119,14 @@ public class ClienteController {
     // controller/ClienteController.java
 // Agrega estos métodos:
 
+    @Operation(
+        summary = "Inicio sesion cliente",
+        description = "Permite a un cliente iniciar sesión en el sistema"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente autenticado exitosamente"),
+        @ApiResponse(responseCode = "401", description = "Credenciales inválidas")
+    })
     // Endpoint de LOGIN
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -74,6 +137,14 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+     @Operation(
+        summary = "Se busca cliente por email o telefono",
+        description = "Permite buscar un cliente por su correo electrónico o número de teléfono"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente encontrado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
     // Endpoint de BÚSQUEDA por email O teléfono
     @GetMapping("/buscar")
     public ClienteResponse buscarPorTelefonoOEmail(@RequestParam String valor) {
