@@ -2,7 +2,6 @@ package com.soa.soaclientes.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.soa.soaclientes.dto.CanjeRequest;
@@ -18,14 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/clientes/{clienteId}", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/clientes/{clienteId}")
 @Tag(name = "Puntos", description = "API para gestión de puntos")
 public class PuntosController {
 
     @Autowired
     private PuntosService puntosService;
 
-    @PostMapping(value = "/puntos/ganar", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/puntos/ganar")
     public ClienteResponse ganarPuntos(@PathVariable UUID clienteId,
                                        @Valid @RequestBody PuntosRequest dto) {
         return puntosService.ganarPuntos(clienteId, dto);
@@ -36,7 +35,7 @@ public class PuntosController {
         return puntosService.obtenerHistorial(clienteId);
     }
 
-    @PostMapping(value = "/canjes", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/canjes")
     public CanjeResponse canjear(@PathVariable UUID clienteId,
                                  @Valid @RequestBody CanjeRequest dto) {
         return puntosService.canjearPromocion(clienteId, dto);

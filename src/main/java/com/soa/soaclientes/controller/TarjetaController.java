@@ -2,7 +2,6 @@ package com.soa.soaclientes.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/clientes/{clienteId}/tarjetas", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/clientes/{clienteId}/tarjetas")
 @Tag(name = "Tarjetas", description = "API para gestión de tarjetas")
 public class TarjetaController {
 

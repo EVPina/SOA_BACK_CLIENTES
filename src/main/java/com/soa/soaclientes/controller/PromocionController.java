@@ -1,7 +1,6 @@
 package com.soa.soaclientes.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.soa.soaclientes.dto.PromocionResponse;
@@ -15,7 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/api/v1/promociones", produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/promociones")
 @Tag(name = "Promociones", description = "API para gestión de promociones")
 public class PromocionController {
 

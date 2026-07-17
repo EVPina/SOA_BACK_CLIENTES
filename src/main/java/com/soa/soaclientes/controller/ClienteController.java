@@ -3,7 +3,6 @@ package com.soa.soaclientes.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +22,14 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/api/v1/clientes",produces = MediaType.APPLICATION_XML_VALUE)
+@RequestMapping(value = "/api/v1/clientes")
 @Tag(name = "Clientes", description = "API para la gestión de clientes del sistema")
 public class ClienteController {
 
     @Autowired
     private ClienteService clienteService;
 
+    @PostMapping
     public ResponseEntity<ClienteResponse> crear(@Valid @RequestBody ClienteRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.crear(dto));
     }
@@ -109,7 +109,7 @@ public class ClienteController {
         @ApiResponse(responseCode = "200", description = "Cliente se agrego cumpleaños exitosamente"),
         @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
-    @PostMapping(value = "/{id}/cumpleanos", consumes = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/{id}/cumpleanos")
     public ResponseEntity<Void> registrarCumpleanos(@PathVariable UUID id,
                                                      @Valid @RequestBody CumpleanosRequest dto) {
         clienteService.registrarCumpleanos(id, dto);
@@ -128,7 +128,7 @@ public class ClienteController {
         @ApiResponse(responseCode = "401", description = "Credenciales inválidas")
     })
     // Endpoint de LOGIN
-    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = clienteService.login(request);
         if (response.success()) {
