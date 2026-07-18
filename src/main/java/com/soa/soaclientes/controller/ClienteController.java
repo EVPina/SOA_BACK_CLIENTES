@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.soa.soaclientes.dto.ClienteRequest;
 import com.soa.soaclientes.dto.ClienteResponse;
 import com.soa.soaclientes.dto.CumpleanosRequest;
+import com.soa.soaclientes.dto.GoogleLoginRequest;
 import com.soa.soaclientes.dto.LoginRequest;
 import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.service.ClienteService;
@@ -131,6 +132,23 @@ public class ClienteController {
     @PostMapping(value = "/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = clienteService.login(request);
+        if (response.success()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @Operation(
+        summary = "Inicio sesion cliente con Google",
+        description = "Permite a un cliente iniciar sesión (o registrarse automáticamente) usando un ID token de Google Sign-In"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente autenticado exitosamente"),
+        @ApiResponse(responseCode = "401", description = "Token de Google inválido")
+    })
+    @PostMapping(value = "/login-google")
+    public ResponseEntity<LoginResponse> loginGoogle(@Valid @RequestBody GoogleLoginRequest request) {
+        LoginResponse response = clienteService.loginConGoogle(request);
         if (response.success()) {
             return ResponseEntity.ok(response);
         }

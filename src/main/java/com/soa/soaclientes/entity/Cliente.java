@@ -19,13 +19,13 @@ public class Cliente {
     @Column(nullable = false, length = 50)
     private String apellido;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(unique = true, length = 15)
     private String telefono;
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
+    @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
     @Column(name = "fecha_registro", nullable = false)

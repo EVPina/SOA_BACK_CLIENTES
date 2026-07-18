@@ -1,14 +1,20 @@
 package com.soa.soaclientes.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.soa.soaclientes.dto.ClienteRequest;
 import com.soa.soaclientes.dto.ClienteResponse;
 import com.soa.soaclientes.dto.CumpleanosRequest;
+import com.soa.soaclientes.dto.GoogleLoginRequest;
 import com.soa.soaclientes.dto.LoginRequest;
 import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.entity.Cliente;
@@ -18,6 +24,9 @@ import com.soa.soaclientes.exception.ResourceNotFoundException;
 import com.soa.soaclientes.repository.ClienteRepository;
 import com.soa.soaclientes.repository.CumpleanosRepository;
 
+import java.security.GeneralSecurityException;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,11 +35,30 @@ public class ClienteService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Value("${google.client-id}")
+    private String googleClientId;
+
+    private GoogleIdTokenVerifier googleIdTokenVerifier;
+
     @Autowired
     private ClienteRepository clienteRepository;
 
     @Autowired
     private CumpleanosRepository cumpleanosRepository;
+
+    private GoogleIdTokenVerifier googleVerifier() {
+        if (googleIdTokenVerifier == null) {
+            try {
+                googleIdTokenVerifier = new GoogleIdTokenVerifier.Builder(
+                        GoogleNetHttpTransport.newTrustedTransport(), GsonFactory.getDefaultInstance())
+                        .setAudience(Collections.singletonList(googleClientId))
+                        .build();
+            } catch (GeneralSecurityException | IOException e) {
+                throw new RuntimeException("No se pudo inicializar el verificador de Google", e);
+            }
+        }
+        return googleIdTokenVerifier;
+    }
 
     @Transactional
     public ClienteResponse crear(ClienteRequest dto) {
@@ -136,7 +164,52 @@ public class ClienteService {
         }
         
         return new LoginResponse(
-            true, 
+            true,
+            "Login exitoso",
+            cliente.getId(),
+            cliente.getNombre(),
+            cliente.getApellido(),
+            cliente.getEmail(),
+            cliente.getTelefono()
+        );
+    }
+
+    @Transactional
+    public LoginResponse loginConGoogle(GoogleLoginRequest request) {
+        GoogleIdToken idToken;
+        try {
+            idToken = googleVerifier().verify(request.idToken());
+        } catch (GeneralSecurityException | IOException | IllegalArgumentException e) {
+            return new LoginResponse(false, "Token de Google inválido", null, null, null, null, null);
+        }
+
+        if (idToken == null) {
+            return new LoginResponse(false, "Token de Google inválido", null, null, null, null, null);
+        }
+
+        GoogleIdToken.Payload payload = idToken.getPayload();
+        if (!Boolean.TRUE.equals(payload.getEmailVerified())) {
+            return new LoginResponse(false, "El correo de Google no está verificado", null, null, null, null, null);
+        }
+
+        String email = payload.getEmail();
+        String nombre = (String) payload.get("given_name");
+        String apellido = (String) payload.get("family_name");
+
+        Cliente cliente = clienteRepository.findByEmail(email).orElseGet(() -> {
+            Cliente nuevo = new Cliente();
+            nuevo.setNombre(nombre != null ? nombre : "Cliente");
+            nuevo.setApellido(apellido != null ? apellido : "");
+            nuevo.setEmail(email);
+            return clienteRepository.save(nuevo);
+        });
+
+        if (!cliente.getActivo()) {
+            return new LoginResponse(false, "Cuenta desactivada", null, null, null, null, null);
+        }
+
+        return new LoginResponse(
+            true,
             "Login exitoso",
             cliente.getId(),
             cliente.getNombre(),
