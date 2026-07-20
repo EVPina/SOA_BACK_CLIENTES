@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.soa.soaclientes.dto.ClienteRequest;
 import com.soa.soaclientes.dto.ClienteResponse;
-import com.soa.soaclientes.dto.CumpleanosRequest;
 import com.soa.soaclientes.dto.GoogleLoginRequest;
 import com.soa.soaclientes.dto.LoginRequest;
 import com.soa.soaclientes.dto.LoginResponse;
@@ -100,21 +99,6 @@ public class ClienteController {
     public ResponseEntity<Void> desactivar(@PathVariable UUID id) {
         clienteService.desactivar(id);
         return ResponseEntity.noContent().build();
-    }
-
-     @Operation(
-        summary = "Se agrego cumpleaños al cliente",
-        description = "Retorna la información de un cliente específico por su ID y se agrega la fecha de cumpleaños"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Cliente se agrego cumpleaños exitosamente"),
-        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
-    })
-    @PostMapping(value = "/{id}/cumpleanos")
-    public ResponseEntity<Void> registrarCumpleanos(@PathVariable UUID id,
-                                                     @Valid @RequestBody CumpleanosRequest dto) {
-        clienteService.registrarCumpleanos(id, dto);
-        return ResponseEntity.ok().build();
     }
 
     // controller/ClienteController.java

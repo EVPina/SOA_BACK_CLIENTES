@@ -18,11 +18,9 @@ import com.soa.soaclientes.dto.GoogleLoginRequest;
 import com.soa.soaclientes.dto.LoginRequest;
 import com.soa.soaclientes.dto.LoginResponse;
 import com.soa.soaclientes.entity.Cliente;
-import com.soa.soaclientes.entity.Cumpleanos;
 import com.soa.soaclientes.exception.BusinessException;
 import com.soa.soaclientes.exception.ResourceNotFoundException;
 import com.soa.soaclientes.repository.ClienteRepository;
-import com.soa.soaclientes.repository.CumpleanosRepository;
 
 import java.security.GeneralSecurityException;
 import java.io.IOException;
@@ -42,9 +40,6 @@ public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
-
-    @Autowired
-    private CumpleanosRepository cumpleanosRepository;
 
     private GoogleIdTokenVerifier googleVerifier() {
         if (googleIdTokenVerifier == null) {
@@ -117,15 +112,6 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    @Transactional
-    public void registrarCumpleanos(UUID id, CumpleanosRequest dto) {
-        Cliente cliente = findEntityById(id);
-        Cumpleanos cumpleanos = cumpleanosRepository.findById(id).orElse(new Cumpleanos());
-        cumpleanos.setCliente(cliente);
-        cumpleanos.setFechaNacimiento(dto.fechaNacimiento());
-        cumpleanos.setEnviarPromocion(dto.enviarPromocion() != null ? dto.enviarPromocion() : true);
-        cumpleanosRepository.save(cumpleanos);
-    }
 
     public Cliente findEntityById(UUID id) {
         return clienteRepository.findById(id)
